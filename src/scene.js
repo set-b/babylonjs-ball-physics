@@ -4,7 +4,7 @@ import { keyboardInput } from "./input";
 import { createBall } from "./meshes/ball";
 import HavokPhysics from "@babylonjs/havok";
 
-export async function createScene(engine, canvas){
+export async function createScene(engine, canvas, audioManager){
 
     const scene = new Scene(engine);
 
@@ -60,11 +60,19 @@ export async function createScene(engine, canvas){
         scene
     )
     ball.position.y = 0.6;
-    
+
+    let hasPlayedFallSound = false;
+
     scene.onBeforeRenderObservable.add(function() {
+
         const deltaTime = engine.getDeltaTime() / 1000;
         platform.update(keyChecker, deltaTime);
-    })
+
+        if (ball.position.y < -5 && hasPlayedFallSound === false){
+            audioManager.play("fallSound");
+            hasPlayedFallSound = true;
+        }
+    });
 
     return scene;
 }
