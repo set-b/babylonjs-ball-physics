@@ -1,9 +1,18 @@
 import { SOUNDS } from "./soundConfig";
-import { CreateSoundAsync } from "@babylonjs/core";
+import { CreateAudioEngineAsync, CreateSoundAsync } from "@babylonjs/core";
 
 export class AudioManager {
-    constructor() {
+    constructor(audioEngine) {
+        this.audioEngine = audioEngine;
         this.sounds = {};
+    }
+
+    static async create() {
+        const audioEngine = await CreateAudioEngineAsync();
+        const manager = new AudioManager(audioEngine);
+        await manager.loadAllSounds();
+        await audioEngine.unlockAsync();
+        return manager;
     }
 
     async loadAllSounds() {
